@@ -1,6 +1,6 @@
-"use strict"
+'use strict'
 
-// Lab 1 - generator
+// Task 1 - Generators and Iterators
 
 const titles = [
     'Bitcoin hits new all time high',
@@ -16,14 +16,8 @@ const titles = [
 ]
 
 const categories = ['tech', 'crypto', 'memes']
-const sources = ['CoinDesk', 'TechCrunch', 'Reddit', 'X', 'Wired', '9GAG']
 
-function getRandomPriority(category) {
-    if (category === 'crypto') return Math.floor(Math.random() * 4) + 7 
-    if (category === 'tech') return Math.floor(Math.random() * 4) + 4
-    return Math.floor(Math.random() * 3) + 1
-}
-
+// pick a source 
 function getSource(category) {
     const sourcesMap = {
         crypto: ['CoinDesk', 'X'],
@@ -32,6 +26,12 @@ function getSource(category) {
     }
     const list = sourcesMap[category]
     return list[Math.floor(Math.random() * list.length)]
+}
+
+function getRandomPriority(category) {
+    if (category === 'crypto') return Math.floor(Math.random() * 4) + 7
+    if (category === 'tech') return Math.floor(Math.random() * 4) + 4 
+    return Math.floor(Math.random() * 3) + 1
 }
 
 export async function* newsFeedGenerator(delayMs = 2000) {
