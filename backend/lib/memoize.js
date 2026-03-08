@@ -6,7 +6,7 @@ export function memoize(fn, options = {}) {
     const maxSize = options.maxSize || 128
     const policy = options.policy || 'lru'
     const ttl = options.ttl || null
-
+    
     // cache stores
     const cache = {}
 
@@ -16,6 +16,17 @@ export function memoize(fn, options = {}) {
         const now = Date.now()
         const expiredKeys = Object.keys(cache).filter(key => now - cache[key].createdAt > ttl)
         expiredKeys.forEach(key => delete cache[key])
+    }
+
+    function evictOne() {
+        const keys = Object.keys(cache)
+        if (keys.length === 0) return
+
+        const lruKey = keys.reduce((oldest, key) =>
+                cache[key].lastUsed < cache[oldest].lastUsed ? key : oldest
+            , keys[0])
+
+        delete cache[lruKey]
     }
 
     function memoized(...args) {
@@ -28,6 +39,11 @@ export function memoize(fn, options = {}) {
             cache[key].lastUsed = Date.now()
             cache[key].useCount++
             return cache[key].result
+        }
+
+        // cache miss
+        if (Object.keys(cache).length >= maxSize) {
+            evictOne()
         }
 
         const result = fn(...args)
