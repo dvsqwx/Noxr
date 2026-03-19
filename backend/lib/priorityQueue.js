@@ -6,7 +6,7 @@ export class BiDirectionalPriorityQueue {
 
     constructor() {
         this.items = []
-        this.counter = 0
+        this.counter = 0  // tracks insertion order
     }
 
     enqueue(item, priority = 0) {
@@ -49,6 +49,31 @@ export class BiDirectionalPriorityQueue {
         })
 
         return bestIndex
+    }
+
+    // returns number of items in the queue
+    size() {
+        return this.items.length
+    }
+
+    // returns true if queue has no items
+    isEmpty() {
+        return this.items.length === 0
+    }
+
+    // returns all items
+    toArray(mode = 'highest') {
+        const result = []
+        const copy = new BiDirectionalPriorityQueue()
+
+        this.items.forEach(entry => copy.enqueue(entry.item, entry.priority))
+
+
+        while (!copy.isEmpty()) {
+            result.push(copy.dequeue(mode))
+        }
+
+        return result
     }
 
 }
