@@ -11,3 +11,8 @@ export function memoize(fn, options = {}) {
     let lastUsed = {}
     let useCount = {}
     let createdAt = {}
+
+    function isExpired(key) {
+        if(!ttl) return false
+        return Date.now() - createdAt[key] > ttl
+    }
