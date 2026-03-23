@@ -26,3 +26,13 @@ export function asyncFilterCallback(array, predicate, callback) {
         })
     })
 }
+
+export function asyncFilterPromise(array, predicate) {
+    return new Promise(function(resolve, reject) {
+        let res = []
+        let n = array.length
+
+        if(array.length === 0) {
+            resolve([])
+            return
+        }
