@@ -36,3 +36,18 @@ export function asyncFilterPromise(array, predicate) {
             resolve([])
             return
         }
+        array.forEach(function(item, i) {
+            Promise.resolve(predicate(item)).then(function(ok) {
+                if(ok) res.push({item, i})
+            }).catch(function(e) {
+                reject(e)
+            }).finally(function() {
+                n--
+                if(n == 0) {
+                    res.sort(function(a,b) { return a.i - b.i })
+                    resolve(res.map(function(x) { return x.item }))
+                }
+            })
+        })
+    })
+}
