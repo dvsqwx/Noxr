@@ -19,17 +19,20 @@ function formatJson(level, message, meta) {
         time: new Date().toISOString(),
         level,
         message,
-        ...meta
+        ...(meta || {})
     }
     return JSON.stringify(obj)
 }
+
 export function createLogger(options = {}) {
     const fmt = options.format == 'json' ? formatJson : formatText
     const minLevel = options.level || 'debug'
     const minIndex = LEVELS.indexOf(minLevel)
 
     function log(level, message, meta) {
-        if(LEVELS.indexOf(level) < minIndex) return
+        const idx = LEVELS.indexOf(level)
+        if(idx === -1) return
+        if(idx < minIndex) return
         const line = fmt(level, message, meta)
         console.log(line)
     }
