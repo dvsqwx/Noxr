@@ -66,3 +66,22 @@ export function withLogging(fn, logger, name) {
         }
     }
 }
+
+export function withLoggingAsync(fn, logger, name) {
+    const fnName = name || fn.name || 'anonymous'
+
+    return async function(...args) {
+        const start = Date.now()
+        logger.call(`${fnName} called`, { args })
+
+        try {
+            const result = await fn(...args)
+            const ms = Date.now() - start
+            logger.info(`${fnName} done`, { ms, result })
+            return result
+        } catch(e) {
+            logger.error(`${fnName} threw`, { error: e.message })
+            throw e
+        }
+    }
+}
