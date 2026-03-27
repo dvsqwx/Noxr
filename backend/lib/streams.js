@@ -8,3 +8,22 @@ export async function* streamFromArray(arr) {
     }
 }
 
+export async function* streamJsonlFile(filepath) {
+    const fs = await import('fs')
+    const readline = await import('readline')
+
+    const fileStream = fs.createReadStream(filepath)
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity
+    })
+
+    for await (const line of rl) {
+        if(line.trim() === '') continue
+        try {
+            yield JSON.parse(line)
+        } catch(e) {
+            console.error('bad line:', line)
+        }
+    }
+}
