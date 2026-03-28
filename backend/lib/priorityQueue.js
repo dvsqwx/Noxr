@@ -47,3 +47,23 @@ export class BiDirectionalPriorityQueue {
 
         return this.items[bestIndex].item
     }
+
+    size() {
+        return this.items.length
+    }
+
+    isEmpty() {
+        return this.items.length === 0
+    }
+
+    toArray(mode = 'highest') {
+        const temp = new BiDirectionalPriorityQueue()
+        this.items.forEach(entry => temp.enqueue(entry.item, entry.priority))
+
+        const result = []
+        while(temp.items.length > 0) {
+            result.push(temp.dequeue(mode))
+        }
+        return result
+    }
+}
