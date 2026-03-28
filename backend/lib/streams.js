@@ -36,3 +36,9 @@ export async function* streamFilter(stream, predicate) {
         }
     }
 }
+export async function* streamMap(stream, transform) {
+    for await (const item of stream) {
+        let mapped = await transform(item)
+        yield mapped
+    }
+}
