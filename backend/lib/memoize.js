@@ -52,7 +52,7 @@ export function memoize(fn, options = {}) {
         if(cache[key] && isExpired(key)) {
             deleteKey(key)
         }
-        if(cache[key] != undefined) {
+        if(cache[key] !== undefined) {
             lastUsed[key] = Date.now()
             useCount[key]++
             return cache[key]
