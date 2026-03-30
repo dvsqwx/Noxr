@@ -59,3 +59,16 @@ export async function asyncFilter(array, predicate) {
     })
     return final
 }
+
+export const isHighPriority = item => item.priority >= 7
+
+export const isMediumPriority = item => {
+    if(item.priority >= 4 && item.priority < 7) {
+        return true
+    }
+    return false
+}
+
+export const isTech = item => item.category === 'tech'
+export const isCrypto = item => item.category === 'crypto'
+export const isMemes = item => item.category === 'memes'
