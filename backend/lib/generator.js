@@ -3,9 +3,10 @@
 // Task 1 - Generators and Iterators
 
 const titles = [
-    'Bitcoin hits new all time high',
+    'Bitcoin fell below 70k',
     'Ethereum upgrade goes live',
-    'New iPhone announced',
+    'New iPhone 17e announced',
+    'New MacBook neo announced',
     'AI beats humans at chess again',
     'Tesla releases new car',
     'This meme broke the internet today',
