@@ -43,9 +43,10 @@ export const APP = {
 } as const
 
 export const TITLES: string[] = [
-    'Bitcoin hits new all time high',
+    'Bitcoin fell below 70k',
     'Ethereum upgrade goes live',
-    'New iPhone announced',
+    'New iPhone 17e announced',
+    'New MacBook neo announced',
     'AI beats humans at chess again',
     'Tesla releases new car',
     'This meme broke the internet today',
@@ -53,4 +54,5 @@ export const TITLES: string[] = [
     'New JavaScript framework dropped',
     'OpenAI releases new model',
     'This cat video has 50 million views',
+]
 ]
