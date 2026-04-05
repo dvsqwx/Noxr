@@ -30,3 +30,8 @@ export class EventEmitter {
 
         return this
     }
+    emit(event: string, data?: unknown): this {
+        if (!this.listeners[event]) return this
+        this.listeners[event].forEach(fn => fn(data))
+        return this
+    }
