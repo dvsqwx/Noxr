@@ -35,3 +35,14 @@ export class EventEmitter {
         this.listeners[event].forEach(fn => fn(data))
         return this
     }
+    once(event: string, fn: Listener): this {
+        const wrapper = (data: unknown) => {
+            fn(data)
+            this.unsubscribe(event, wrapper)
+        }
+        return this.subscribe(event, wrapper)
+    }
+
+    on(event: string, fn: Listener): this {
+        return this.subscribe(event, fn)
+    }
