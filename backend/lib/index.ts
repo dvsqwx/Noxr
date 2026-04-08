@@ -14,7 +14,7 @@ export {
     isTech,
     isCrypto,
     isMemes
-} from './asyncFilter.js'
+} from './asyncFilter.ts'
 
 export {
     streamFromArray,
@@ -29,7 +29,7 @@ export {
     EventEmitter,
     EVENTS,
     getEmitter
-} from './eventEmitter.js'
+} from './eventEmitter.ts'
 
 export {
     createLogger,
@@ -44,4 +44,4 @@ export {
     OAuthStrategy,
     RateLimiter,
     AuthProxy
-} from './authProxy.js'
+} from './authProxy.ts'
