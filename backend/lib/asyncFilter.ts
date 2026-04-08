@@ -38,3 +38,29 @@ export function asyncFilterCallback<T>(
         })
     })
 }
+
+export function asyncFilterSync<T>(
+    array: T[],
+    predicate: SyncPredicate<T>,
+    callback: Callback<T[]>
+): void {
+    if(!array || array.length == 0) {
+        callback(null, [])
+        return
+    }
+
+    const res: T[] = []
+
+    for(let i = 0; i < array.length; i++) {
+        try {
+            if(predicate(array[i])) {
+                res.push(array[i])
+            }
+        } catch(e) {
+            callback(e instanceof Error ? e : new Error(String(e)), [])
+            return
+        }
+    }
+
+    callback(null, res)
+}
