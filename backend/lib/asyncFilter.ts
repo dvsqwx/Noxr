@@ -64,3 +64,21 @@ export function asyncFilterSync<T>(
 
     callback(null, res)
 }
+
+interface Article {
+    priority: number
+    category: string
+}
+
+export const isHighPriority = (item: Article): boolean => item.priority >= 7
+
+export const isMediumPriority = (item: Article): boolean => {
+    if(item.priority >= 4 && item.priority < 7) {
+        return true
+    }
+    return false
+}
+
+export const isTech   = (item: Article): boolean => item.category === 'tech'
+export const isCrypto = (item: Article): boolean => item.category === 'crypto'
+export const isMemes  = (item: Article): boolean => item.category === 'memes'
