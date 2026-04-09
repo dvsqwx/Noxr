@@ -1,8 +1,14 @@
-'use strict'
+interface Article {
+    id: number
+    title: string
+    category: string
+    source: string
+    priority: number
+    timestamp: string
+    summary: string
+}
 
-// Task 1 - Generators and Iterators
-
-const titles = [
+const titles: string[] = [
     'Bitcoin fell below 70k',
     'Ethereum upgrade goes live',
     'New iPhone 17e announced',
@@ -16,11 +22,10 @@ const titles = [
     'This cat video has 50 million views',
 ]
 
-const categories = ['tech', 'crypto', 'memes']
+const categories: string[] = ['tech', 'crypto', 'memes']
 
-// pick a source 
-function getSource(category) {
-    const sourcesMap = {
+function getSource(category: string): string {
+    const sourcesMap: Record<string, string[]> = {
         crypto: ['CoinDesk', 'X'],
         tech: ['TechCrunch', 'Wired'],
         memes: ['Reddit', '9GAG'],
@@ -29,19 +34,19 @@ function getSource(category) {
     return list[Math.floor(Math.random() * list.length)]
 }
 
-function getRandomPriority(category) {
-    if (category === 'crypto') return Math.floor(Math.random() * 4) + 7
-    if (category === 'tech') return Math.floor(Math.random() * 4) + 4 
+function getRandomPriority(category: string): number {
+    if(category === 'crypto') return Math.floor(Math.random() * 4) + 7
+    if(category === 'tech') return Math.floor(Math.random() * 4) + 4
     return Math.floor(Math.random() * 3) + 1
 }
 
-export async function* newsFeedGenerator(delayMs = 2000) {
+export async function* newsFeedGenerator(delayMs: number = 2000): AsyncGenerator<Article> {
     let id = 1
 
-    while (true) {
+    while(true) {
         const category = categories[Math.floor(Math.random() * categories.length)]
 
-        const article = {
+        const article: Article = {
             id: id,
             title: titles[Math.floor(Math.random() * titles.length)],
             category: category,
@@ -58,15 +63,19 @@ export async function* newsFeedGenerator(delayMs = 2000) {
     }
 }
 
-export async function timeoutIterator(iterator, timeoutMs, onItem) {
-    const results = []
+export async function timeoutIterator<T>(
+    iterator: AsyncIterator<T>,
+    timeoutMs: number,
+    onItem?: (item: T) => void
+): Promise<T[]> {
+    const results: T[] = []
     const startTime = Date.now()
 
-    for await (const item of iterator) {
-        if (Date.now() - startTime >= timeoutMs) break
+    for await (const item of { [Symbol.asyncIterator]: () => iterator }) {
+        if(Date.now() - startTime >= timeoutMs) break
 
         results.push(item)
-        onItem?.(item)
+        if(onItem) onItem(item)
     }
 
     return results
