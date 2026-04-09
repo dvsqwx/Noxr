@@ -20,3 +20,16 @@ export class ApiKeyStrategy implements Strategy {
         return headers
     }
 }
+
+export class BearerTokenStrategy implements Strategy {
+    private token: string
+
+    constructor(token: string) {
+        this.token = token
+    }
+
+    authenticate(headers: Headers): Headers {
+        headers['Authorization'] = `Bearer ${this.token}`
+        return headers
+    }
+}
