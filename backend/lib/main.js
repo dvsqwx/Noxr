@@ -35,3 +35,10 @@ function onArticle(article) {
     state.queue.enqueue(article, article.priority)
     state.emitter.emit(EVENTS.ARTICLE, article)
 }
+
+async function startFeed() {
+    const gen = newsFeedGenerator(2000)
+    for await (const article of gen) {
+        onArticle(article)
+    }
+}
