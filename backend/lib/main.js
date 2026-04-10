@@ -21,3 +21,17 @@ const state = {
 const getCatCount = memoize((cat) => {
     return state.articles.filter(a => a.category === cat).length
 })
+
+function onArticle(article) {
+    if(state.paused) return
+
+    state.articles.unshift(article)
+    state.stats.total++
+    state.stats.shown++
+
+    if(article.priority >= 7) state.stats.high++
+
+    state.cats[article.category] = (state.cats[article.category] || 0) + 1
+    state.queue.enqueue(article, article.priority)
+    state.emitter.emit(EVENTS.ARTICLE, article)
+}
