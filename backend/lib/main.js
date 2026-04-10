@@ -42,3 +42,9 @@ async function startFeed() {
         onArticle(article)
     }
 }
+
+function getPriorityClass(priority) {
+    if(priority >= 7) return 'high'
+    if(priority >= 4) return 'medium'
+    return 'low'
+}
