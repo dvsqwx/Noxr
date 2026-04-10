@@ -1,6 +1,6 @@
 # Noxr
 
-Noxr is a real-time news aggregator dashboard that streams live articles across crypto, tech, and memes categories. Built as a university project to demonstrate advanced JavaScript and TypeScript concepts in a single cohesive application.
+Noxr is a real-time news aggregator dashboard that streams live articles across crypto, tech, and memes categories. 
 
 ## What it does
 
