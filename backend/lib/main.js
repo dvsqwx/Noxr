@@ -66,3 +66,35 @@ function timeAgo(timestamp) {
     const hrs = Math.floor(mins / 60)
     return `${hrs}h ago`
 }
+
+function renderCard(article) {
+    const list = document.getElementById('articles-list')
+    if(!list) return
+
+    const empty = list.querySelector('.empty-state')
+    if(empty) empty.remove()
+
+    const cls = getPriorityClass(article.priority)
+
+    const card = document.createElement('div')
+    card.className = `article-card ${cls}`
+    card.dataset.id = article.id
+    card.dataset.category = article.category
+    card.dataset.priority = article.priority
+
+    card.innerHTML = `
+        <div class="article-body">
+            <div class="article-title">${article.title}</div>
+            <div class="article-meta">
+                <span class="tag tag-${article.category}">${article.category}</span>
+                <span class="article-source">${article.source}</span>
+                <span class="article-time">${timeAgo(article.timestamp)}</span>
+            </div>
+        </div>
+    `
+
+    list.prepend(card)
+
+    const cards = list.querySelectorAll('.article-card')
+    if(cards.length > 50) cards[cards.length - 1].remove()
+}
