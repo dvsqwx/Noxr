@@ -115,3 +115,28 @@ function updateStats() {
     if(high)  high.textContent  = state.stats.high
     if(queue) queue.textContent = state.queue.size()
 }
+
+function updateCategories() {
+    const list = document.getElementById('cat-list')
+    if(!list) return
+
+    const total = state.stats.total || 1
+    const cats  = ['crypto', 'tech', 'memes']
+
+    list.innerHTML = cats.map(cat => {
+        const count = state.cats[cat] || 0
+        const pct   = Math.round((count / total) * 100)
+
+        return `
+            <div class="cat-row">
+                <div class="cat-header">
+                    <span class="cat-name">${cat}</span>
+                    <span class="cat-num">${count}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${pct}%"></div>
+                </div>
+            </div>
+        `
+    }).join('')
+}
