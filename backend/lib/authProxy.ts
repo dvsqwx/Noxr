@@ -63,3 +63,33 @@ export class OAuthStrategy implements Strategy {
         return headers
     }
 }
+
+export class RateLimiter {
+    private maxPerSecond: number
+    private requests: number[] = []
+
+    constructor(maxPerSecond: number) {
+        this.maxPerSecond = maxPerSecond
+    }
+
+    isAllowed(): boolean {
+        const now = Date.now()
+        const oneSecondAgo = now - 1000
+
+        this.requests = this.requests.filter(t => t > oneSecondAgo)
+
+        if(this.requests.length >= this.maxPerSecond) {
+            return false
+        }
+
+        this.requests.push(now)
+        return true
+    }
+
+    remaining(): number {
+        const now = Date.now()
+        const oneSecondAgo = now - 1000
+        this.requests = this.requests.filter(t => t > oneSecondAgo)
+        return this.maxPerSecond - this.requests.length
+    }
+}
