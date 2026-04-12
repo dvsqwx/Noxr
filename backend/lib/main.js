@@ -140,3 +140,14 @@ function updateCategories() {
         `
     }).join('')
 }
+
+
+state.emitter.on(EVENTS.ARTICLE, renderCard)
+state.emitter.on(EVENTS.ARTICLE, () => {
+    updateStats()
+    updateCategories()
+})
+
+startFeed()
+
+export { state, onArticle, startFeed, renderCard, getPriorityClass, timeAgo, updateStats, updateCategories }
