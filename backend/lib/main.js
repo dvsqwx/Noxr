@@ -58,15 +58,6 @@ function timeAgo(timestamp) {
     return `${hrs}h ago`
 }
 
-function timeAgo(timestamp) {
-    const diff = Date.now() - new Date(timestamp).getTime()
-    const mins = Math.floor(diff / 60000)
-    if(mins < 1) return 'just now'
-    if(mins < 60) return `${mins} min ago`
-    const hrs = Math.floor(mins / 60)
-    return `${hrs}h ago`
-}
-
 function renderCard(article) {
     const list = document.getElementById('articles-list')
     if(!list) return
@@ -98,11 +89,6 @@ function renderCard(article) {
     const cards = list.querySelectorAll('.article-card')
     if(cards.length > 50) cards[cards.length - 1].remove()
 }
-
-export { state, onArticle, startFeed, renderCard, getPriorityClass, timeAgo }
-
-state.emitter.on(EVENTS.ARTICLE, renderCard)
-startFeed()
 
 function updateStats() {
     const total = document.getElementById('s-total')
@@ -141,13 +127,54 @@ function updateCategories() {
     }).join('')
 }
 
+function loadQueue() {
+    const list = document.getElementById('queue-list')
+    if(!list) return
+
+    const items = state.queue.toArray('highest').slice(0, 10)
+
+    if(items.length == 0) {
+        list.innerHTML = '<p style="color:#ccc;font-size:10px">empty</p>'
+        return
+    }
+
+    list.innerHTML = items.map((article, i) => {
+        const num = String(i + 1).padStart(2, '0')
+        return `
+            <div class="queue-row">
+                <span class="queue-num">${num}</span>
+                <span class="queue-title">${article.title}</span>
+            </div>
+        `
+    }).join('')
+}
+
+const logs = []
+
+function addLog(type, message) {
+    const time = new Date().toTimeString().slice(0, 8)
+    logs.unshift({ type, message, time })
+    if(logs.length > 100) logs.pop()
+    renderLogs()
+}
+
+function renderLogs() {
+    const box = document.getElementById('log-output')
+    if(!box) return
+
+    box.innerHTML = logs.map(log => `
+        <div class="log-${log.type}">[${log.type}] ${log.message}</div>
+    `).join('')
+}
 
 state.emitter.on(EVENTS.ARTICLE, renderCard)
-state.emitter.on(EVENTS.ARTICLE, () => {
+state.emitter.on(EVENTS.ARTICLE, (article) => {
     updateStats()
     updateCategories()
+    loadQueue()
+    addLog('info', `article received: ${article.title}`)
 })
 
 startFeed()
 
-export { state, onArticle, startFeed, renderCard, getPriorityClass, timeAgo, updateStats, updateCategories }
+export { state, onArticle, startFeed, renderCard, getPriorityClass, timeAgo, updateStats, updateCategories, loadQueue, addLog }
