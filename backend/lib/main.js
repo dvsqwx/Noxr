@@ -64,8 +64,8 @@ const categories = ['tech', 'crypto', 'memes']
 function getSource(category) {
     const map = {
         crypto: ['CoinDesk', 'X'],
-        tech:   ['TechCrunch', 'Wired'],
-        memes:  ['Reddit', '9GAG'],
+        tech: ['TechCrunch', 'Wired'],
+        memes: ['Reddit', '9GAG'],
     }
     const list = map[category]
     return list[Math.floor(Math.random() * list.length)]
