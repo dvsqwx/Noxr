@@ -98,12 +98,12 @@ async function* newsFeedGenerator(delayMs = 2000) {
 
 function memoize(fn, options = {}) {
     const maxSize = options.maxSize || 128
-    const policy  = options.policy  || 'lru'
-    const ttl     = options.ttl     || null
+    const policy = options.policy || 'lru'
+    const ttl = options.ttl || null
 
-    let cache     = {}
-    let lastUsed  = {}
-    let useCount  = {}
+    let cache = {}
+    let lastUsed = {}
+    let useCount = {}
     let createdAt = {}
 
     function isExpired(key) {
@@ -144,9 +144,9 @@ function memoize(fn, options = {}) {
         }
         if(Object.keys(cache).length >= maxSize) evict()
         const result = fn(...args)
-        cache[key]     = result
-        useCount[key]  = 1
-        lastUsed[key]  = Date.now()
+        cache[key] = result
+        useCount[key] = 1
+        lastUsed[key] = Date.now()
         createdAt[key] = Date.now()
         return result
     }
@@ -402,11 +402,11 @@ function clearFeed() {
     const list = document.getElementById('articles-list')
     if(!list) return
     list.innerHTML = `<div class="empty-state"><div class="spinner"></div><p>waiting for articles...</p></div>`
-    state.articles        = []
-    state.stats.total     = 0
-    state.stats.shown     = 0
-    state.stats.high      = 0
-    state.cats            = { tech: 0, crypto: 0, memes: 0 }
+    state.articles = []
+    state.stats.total = 0
+    state.stats.shown = 0
+    state.stats.high = 0
+    state.cats = { tech: 0, crypto: 0, memes: 0 }
     while(!state.queue.isEmpty()) state.queue.dequeue()
     getCatCount.clearCache()
     updateStats()
