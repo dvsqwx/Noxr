@@ -23,16 +23,17 @@
 
     <label>priority:</label>
     <select id="filter-pri">
-        <option value="1">any</option>
-        <option value="4">4+</option>
-        <option value="7">7+</option>
-        <option value="9">critical</option>
+    <option value="1">all</option>
+    <option value="4">common</option>
+    <option value="7">rare</option>
+    <option value="9">hype</option>
+</select>
     </select>
 
     <button class="btn btn-primary" id="btn-filter">[ filter ]</button>
     <button class="btn btn-secondary" id="btn-pause">[ pause ]</button>
     <button class="btn btn-danger" id="btn-clear">[ clear ]</button>
-    <button class="btn btn-secondary" onclick="toggleStats()">[ stats ]</button>
+    <button class="btn btn-secondary" id="btn-stats">[ stats ]</button>
 </div>
 
 <div class="layout">
@@ -107,35 +108,7 @@
 
         <section>
             <h3>categories</h3>
-            <div id="cat-list">
-                <div class="cat-row">
-                    <div class="cat-header">
-                        <span class="cat-name">crypto</span>
-                        <span class="cat-num">0</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div class="cat-row">
-                    <div class="cat-header">
-                        <span class="cat-name">tech</span>
-                        <span class="cat-num">0</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div class="cat-row">
-                    <div class="cat-header">
-                        <span class="cat-name">memes</span>
-                        <span class="cat-num">0</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
+            <div id="cat-list"></div>
         </section>
 
         <section>
@@ -156,23 +129,22 @@
 </div>
 
 <footer>
-    <div class="ticker-track" id="ticker-track">
-        <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>connecting to live feed...</div>
-        <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>Noxr v1.0</div>
-        <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>connecting to live feed...</div>
-        <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>Noxr v1.0</div>
+    <div class="ticker-wrap">
+        <div class="ticker-track" id="ticker-track">
+            <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>connecting to live feed...</div>
+            <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>Noxr v1.0</div>
+            <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>initializing modules...</div>
+            <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>ready</div>
+            <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>connecting to live feed...</div>
+            <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>Noxr v1.0</div>
+            <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>initializing modules...</div>
+            <div class="ticker-item"><span class="ticker-cat">sys</span><span class="ticker-sep">/</span>ready</div>
+        </div>
     </div>
 </footer>
 
 <div id="toasts"></div>
 
-<script>
-    function toggleStats() {
-        const panel = document.getElementById('stats-panel')
-        const isHidden = panel.style.display === 'none'
-        panel.style.display = isHidden ? 'block' : 'none'
-    }
-</script>
 <script type="module" src="main.js"></script>
 
 </body>
