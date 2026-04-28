@@ -1,71 +1,75 @@
 'use strict'
 
-const titles = [
-    'Bitcoin fell below 70k',
-    'Ethereum upgrade goes live',
-    'Man spends life savings on Dogecoin',
-    'Crypto market crashes overnight',
-    'Bitcoin hits new all time high',
-    'Ethereum just flipped Bitcoin in volume',
-    'New memecoin up 10000% in 24 hours',
-    'Binance under investigation again',
-    'El Salvador doubles down on Bitcoin',
-    'Fed rate decision tanks crypto market',
-    'BlackRock files for Ethereum ETF',
-    'Tether prints 1 billion USDT overnight',
-    'Solana network goes down again',
-    'Dogecoin surges after Elon tweet',
-    'Crypto whale moves 50k Bitcoin',
-    'New iPhone 17e announced',
-    'New MacBook neo announced',
-    'AI beats humans at chess again',
-    'Tesla releases new car',
-    'New JavaScript framework dropped',
-    'OpenAI releases new model',
-    'Google fires 200 engineers replaced by AI',
-    'Apple Vision Pro 2 leaked specs',
-    'Microsoft adds AI to everything',
-    'Meta releases open source AI model',
-    'Linux kernel hits 40 million lines of code',
-    'Stack Overflow traffic down 40 percent',
-    'New MacBook gets 30 hour battery life',
-    'GitHub Copilot can now write entire apps',
-    'React 20 released with breaking changes',
-    'Nvidia GPU shortage hits developers again',
-    'Apple sued over App Store monopoly again',
-    'SpaceX Starship reaches orbit finally',
-    'This meme broke the internet today',
-    'This cat video has 50 million views',
-    'Man goes viral for eating 100 nuggets',
-    'Twitter renamed to X again reportedly',
-    'Reddit down for 6 hours nobody noticed',
-    'Guy codes entire app using only memes',
-    'ChatGPT asked to write a poem about itself',
-    'Speedrunner beats game in negative time',
-    'Man buys island with NFT profits in 2021',
-    'This dog video has more views than the Super Bowl',
-    'Woman live streams herself deleting System32',
-    'Twitch streamer accidentally codes something useful',
-    'Gen Z explains "brain rot" to confused millennials',
-    'This "delulu" tweet about coffee has 800k likes',
-    'NPC livestreamer earns $40k in one stream',
-    'Man quits job via TikTok, video hits 5M views',
-    'Duolingo owl meme account reaches 1M followers',
-    '"Just girly things" format makes unexpected comeback',
-    'Looksmaxxing community hits 500k members on Reddit',
-    'Wojak variant goes viral after Fed rate decision',
-    'Nobody knows who started this trend',
-    'Comment section more entertaining than the video',
-    'Guy proposes to girlfriend using GitHub pull request',
-]
+const titlesByCategory = {
+    crypto: [
+        'Bitcoin fell below 70k',
+        'Ethereum upgrade goes live',
+        'Man spends life savings on Dogecoin',
+        'Crypto market crashes overnight',
+        'Bitcoin hits new all time high',
+        'Ethereum just flipped Bitcoin in volume',
+        'New memecoin up 10000% in 24 hours',
+        'Binance under investigation again',
+        'El Salvador doubles down on Bitcoin',
+        'Fed rate decision tanks crypto market',
+        'BlackRock files for Ethereum ETF',
+        'Tether prints 1 billion USDT overnight',
+        'Solana network goes down again',
+        'Dogecoin surges after Elon tweet',
+        'Crypto whale moves 50k Bitcoin',
+    ],
+    tech: [
+        'New iPhone 17e announced',
+        'New MacBook neo announced',
+        'AI beats humans at chess again',
+        'Tesla releases new car',
+        'New JavaScript framework dropped',
+        'OpenAI releases new model',
+        'Google fires 200 engineers replaced by AI',
+        'Apple Vision Pro 2 leaked specs',
+        'Microsoft adds AI to everything',
+        'Meta releases open source AI model',
+        'Linux kernel hits 40 million lines of code',
+        'Stack Overflow traffic down 40 percent',
+        'New MacBook gets 30 hour battery life',
+        'GitHub Copilot can now write entire apps',
+        'React 20 released with breaking changes',
+        'Nvidia GPU shortage hits developers again',
+        'Apple sued over App Store monopoly again',
+        'SpaceX Starship reaches orbit finally',
+    ],
+    memes: [
+        'This meme broke the internet today',
+        'This cat video has 50 million views',
+        'Man goes viral for eating 100 nuggets',
+        'Twitter renamed to X again reportedly',
+        'Reddit down for 6 hours nobody noticed',
+        'Guy codes entire app using only memes',
+        'ChatGPT asked to write a poem about itself',
+        'Speedrunner beats game in negative time',
+        'Man buys island with NFT profits in 2021',
+        'This dog video has more views than the Super Bowl',
+        'Woman live streams herself deleting System32',
+        'Twitch streamer accidentally codes something useful',
+        'Gen Z explains brain rot to confused millennials',
+        'NPC livestreamer earns 40k in one stream',
+        'Man quits job via TikTok video hits 5M views',
+        'Duolingo owl meme account reaches 1M followers',
+        'Looksmaxxing community hits 500k members on Reddit',
+        'Wojak variant goes viral after Fed rate decision',
+        'Nobody knows who started this trend',
+        'Comment section more entertaining than the video',
+        'Guy proposes to girlfriend using GitHub pull request',
+    ],
+}
 
 const categories = ['tech', 'crypto', 'memes']
 
 function getSource(category) {
     const map = {
         crypto: ['CoinDesk', 'X'],
-        tech: ['TechCrunch', 'Wired'],
-        memes: ['Reddit', '9GAG'],
+        tech:   ['TechCrunch', 'Wired'],
+        memes:  ['Reddit', '9GAG'],
     }
     const list = map[category]
     return list[Math.floor(Math.random() * list.length)]
@@ -83,7 +87,7 @@ async function* newsFeedGenerator(delayMs = 2000) {
         const category = categories[Math.floor(Math.random() * categories.length)]
         const article = {
             id,
-            title:     titles[Math.floor(Math.random() * titles.length)],
+            title: titlesByCategory[category][Math.floor(Math.random() * titlesByCategory[category].length)],
             category,
             source:    getSource(category),
             priority:  getRandomPriority(category),
@@ -98,12 +102,12 @@ async function* newsFeedGenerator(delayMs = 2000) {
 
 function memoize(fn, options = {}) {
     const maxSize = options.maxSize || 128
-    const policy = options.policy || 'lru'
-    const ttl = options.ttl || null
+    const policy  = options.policy  || 'lru'
+    const ttl     = options.ttl     || null
 
-    let cache = {}
-    let lastUsed = {}
-    let useCount = {}
+    let cache     = {}
+    let lastUsed  = {}
+    let useCount  = {}
     let createdAt = {}
 
     function isExpired(key) {
@@ -144,9 +148,9 @@ function memoize(fn, options = {}) {
         }
         if(Object.keys(cache).length >= maxSize) evict()
         const result = fn(...args)
-        cache[key] = result
-        useCount[key] = 1
-        lastUsed[key] = Date.now()
+        cache[key]     = result
+        useCount[key]  = 1
+        lastUsed[key]  = Date.now()
         createdAt[key] = Date.now()
         return result
     }
@@ -291,12 +295,19 @@ function renderCard(article) {
     const empty = list.querySelector('.empty-state')
     if(empty) empty.remove()
 
+    const activeCat = document.getElementById('filter-cat').value
+    const activePri = parseInt(document.getElementById('filter-pri').value) || 1
+
     const cls  = getPriorityClass(article.priority)
     const card = document.createElement('div')
     card.className = `article-card ${cls}`
     card.dataset.id       = article.id
     card.dataset.category = article.category
     card.dataset.priority = article.priority
+
+    const catMatch = !activeCat || article.category === activeCat
+    const priMatch = article.priority >= activePri
+    if(!catMatch || !priMatch) card.style.display = 'none'
 
     card.innerHTML = `
         <div class="article-body">
@@ -388,7 +399,9 @@ function applyFilter() {
     const visible = document.querySelectorAll('.article-card:not([style*="none"])').length
     state.stats.shown = visible
     updateStats()
-    addLog('call', `filter applied — cat: ${cat || 'all'}, priority: ${pri}+`)
+
+    const priLabel = { '1': 'all', '4': 'common', '7': 'rare', '9': 'hype' }
+    addLog('call', `filter applied — cat: ${cat || 'all'}, priority: ${priLabel[String(pri)] || pri}`)
 }
 
 function togglePause() {
@@ -405,7 +418,7 @@ function clearFeed() {
     state.articles = []
     state.stats.total = 0
     state.stats.shown = 0
-    state.stats.high = 0
+    state.stats.high  = 0
     state.cats = { tech: 0, crypto: 0, memes: 0 }
     while(!state.queue.isEmpty()) state.queue.dequeue()
     getCatCount.clearCache()
