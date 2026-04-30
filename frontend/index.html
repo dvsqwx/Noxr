@@ -23,11 +23,10 @@
 
     <label>priority:</label>
     <select id="filter-pri">
-    <option value="1">all</option>
-    <option value="4">common</option>
-    <option value="7">rare</option>
-    <option value="9">hype</option>
-</select>
+        <option value="1">all</option>
+        <option value="4">common</option>
+        <option value="7">rare</option>
+        <option value="9">hype</option>
     </select>
 
     <button class="btn btn-primary" id="btn-filter">[ filter ]</button>
@@ -55,7 +54,6 @@
     <aside>
 
         <section id="stats-panel" style="display: none;">
-
             <h3>statistics</h3>
             <div class="stats-grid">
                 <div class="stat">
@@ -103,12 +101,18 @@
                 <span class="info-key">status</span>
                 <span class="info-val">active</span>
             </div>
-
         </section>
 
         <section>
             <h3>categories</h3>
             <div id="cat-list"></div>
+        </section>
+
+        <section>
+            <h3>bookmarks</h3>
+            <div id="bookmark-list">
+                <p style="color:#ccc;font-size:10px">no bookmarks yet</p>
+            </div>
         </section>
 
         <section>
