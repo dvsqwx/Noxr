@@ -85,9 +85,10 @@ async function* newsFeedGenerator(delayMs = 2000) {
     let id = 1
     while(true) {
         const category = categories[Math.floor(Math.random() * categories.length)]
+        const list = titlesByCategory[category]
         const article = {
             id,
-            title: titlesByCategory[category][Math.floor(Math.random() * titlesByCategory[category].length)],
+            title:     list[Math.floor(Math.random() * list.length)],
             category,
             source:    getSource(category),
             priority:  getRandomPriority(category),
@@ -244,12 +245,15 @@ function getEmitter() {
 }
 
 const state = {
-    articles: [],
-    paused:   false,
-    queue:    new BiDirectionalPriorityQueue(),
-    emitter:  getEmitter(),
-    stats:    { total: 0, shown: 0, high: 0 },
-    cats:     { tech: 0, crypto: 0, memes: 0 },
+    articles:  [],
+    paused:    false,
+    queue:     new BiDirectionalPriorityQueue(),
+    emitter:   getEmitter(),
+    stats:     { total: 0, shown: 0, high: 0 },
+    cats:      { tech: 0, crypto: 0, memes: 0 },
+    likes:     {},   // id -> true
+    dislikes:  {},   // id -> true
+    bookmarks: [],   // array of article objects
 }
 
 const getCatCount = memoize((cat) => {
@@ -289,6 +293,69 @@ function timeAgo(timestamp) {
     return `${Math.floor(mins / 60)}h ago`
 }
 
+function handleLike(id, btn) {
+    if(state.likes[id]) {
+        delete state.likes[id]
+        btn.classList.remove('active')
+        addLog('debug', `unliked article #${id}`)
+    } else {
+        state.likes[id] = true
+        delete state.dislikes[id]
+        btn.classList.add('active')
+        const disBtn = document.querySelector(`.article-card[data-id="${id}"] .btn-dislike`)
+        if(disBtn) disBtn.classList.remove('active')
+        addLog('info', `liked article #${id}`)
+    }
+}
+
+function handleDislike(id, btn) {
+    if(state.dislikes[id]) {
+        delete state.dislikes[id]
+        btn.classList.remove('active')
+        addLog('debug', `removed dislike from article #${id}`)
+    } else {
+        state.dislikes[id] = true
+        delete state.likes[id]
+        btn.classList.add('active')
+        const likeBtn = document.querySelector(`.article-card[data-id="${id}"] .btn-like`)
+        if(likeBtn) likeBtn.classList.remove('active')
+        addLog('info', `disliked article #${id}`)
+    }
+}
+
+function handleBookmark(article, btn) {
+    const already = state.bookmarks.find(a => a.id == article.id)
+    if(already) {
+        state.bookmarks = state.bookmarks.filter(a => a.id != article.id)
+        btn.classList.remove('active')
+        btn.textContent = '☆'
+        addLog('debug', `removed bookmark: ${article.title}`)
+    } else {
+        state.bookmarks.unshift(article)
+        btn.classList.add('active')
+        btn.textContent = '★'
+        addLog('info', `bookmarked: ${article.title}`)
+    }
+    renderBookmarks()
+}
+
+function renderBookmarks() {
+    const list = document.getElementById('bookmark-list')
+    if(!list) return
+
+    if(state.bookmarks.length == 0) {
+        list.innerHTML = '<p style="color:#ccc;font-size:10px">no bookmarks yet</p>'
+        return
+    }
+
+    list.innerHTML = state.bookmarks.map(article => `
+        <div class="bookmark-row">
+            <span class="tag tag-${article.category}">${article.category}</span>
+            <span class="bookmark-title">${article.title}</span>
+        </div>
+    `).join('')
+}
+
 function renderCard(article) {
     const list = document.getElementById('articles-list')
     if(!list) return
@@ -316,9 +383,24 @@ function renderCard(article) {
                 <span class="tag tag-${article.category}">${article.category}</span>
                 <span class="article-source">${article.source}</span>
                 <span class="article-time">${timeAgo(article.timestamp)}</span>
+                <div class="article-actions">
+                    <button class="btn-like" title="like">↑</button>
+                    <button class="btn-dislike" title="dislike">↓</button>
+                    <button class="btn-bookmark" title="bookmark">☆</button>
+                </div>
             </div>
         </div>
     `
+
+    // wire buttons
+    const likeBtn     = card.querySelector('.btn-like')
+    const dislikeBtn  = card.querySelector('.btn-dislike')
+    const bookmarkBtn = card.querySelector('.btn-bookmark')
+
+    likeBtn.addEventListener('click', (e) => { e.stopPropagation(); handleLike(article.id, likeBtn) })
+    dislikeBtn.addEventListener('click', (e) => { e.stopPropagation(); handleDislike(article.id, dislikeBtn) })
+    bookmarkBtn.addEventListener('click', (e) => { e.stopPropagation(); handleBookmark(article, bookmarkBtn) })
+
     list.prepend(card)
 
     const cards = list.querySelectorAll('.article-card')
@@ -420,6 +502,8 @@ function clearFeed() {
     state.stats.shown = 0
     state.stats.high  = 0
     state.cats = { tech: 0, crypto: 0, memes: 0 }
+    state.likes = {}
+    state.dislikes = {}
     while(!state.queue.isEmpty()) state.queue.dequeue()
     getCatCount.clearCache()
     updateStats()
@@ -459,7 +543,9 @@ function init() {
     addLog('call', 'subscribing to article events')
     updateCategories()
     updateStats()
+    renderBookmarks()
 }
+
 
 document.getElementById('btn-filter').addEventListener('click', applyFilter)
 document.getElementById('btn-pause').addEventListener('click', togglePause)
