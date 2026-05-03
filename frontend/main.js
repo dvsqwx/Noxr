@@ -68,8 +68,8 @@ const categories = ['tech', 'crypto', 'memes']
 function getSource(category) {
     const map = {
         crypto: ['CoinDesk', 'X'],
-        tech:   ['TechCrunch', 'Wired'],
-        memes:  ['Reddit', '9GAG'],
+        tech: ['TechCrunch', 'Wired'],
+        memes: ['Reddit', '9GAG'],
     }
     const list = map[category]
     return list[Math.floor(Math.random() * list.length)]
@@ -77,7 +77,7 @@ function getSource(category) {
 
 function getRandomPriority(category) {
     if(category === 'crypto') return Math.floor(Math.random() * 4) + 7
-    if(category === 'tech')   return Math.floor(Math.random() * 4) + 4
+    if(category === 'tech') return Math.floor(Math.random() * 4) + 4
     return Math.floor(Math.random() * 3) + 1
 }
 
@@ -88,12 +88,12 @@ async function* newsFeedGenerator(delayMs = 2000) {
         const list = titlesByCategory[category]
         const article = {
             id,
-            title:     list[Math.floor(Math.random() * list.length)],
+            title: list[Math.floor(Math.random() * list.length)],
             category,
-            source:    getSource(category),
-            priority:  getRandomPriority(category),
+            source: getSource(category),
+            priority: getRandomPriority(category),
             timestamp: new Date().toISOString(),
-            summary:   `This is a summary about ${category} news`,
+            summary: `This is a summary about ${category} news`,
         }
         yield article
         id++
@@ -103,12 +103,12 @@ async function* newsFeedGenerator(delayMs = 2000) {
 
 function memoize(fn, options = {}) {
     const maxSize = options.maxSize || 128
-    const policy  = options.policy  || 'lru'
-    const ttl     = options.ttl     || null
+    const policy = options.policy || 'lru'
+    const ttl = options.ttl || null
 
-    let cache     = {}
-    let lastUsed  = {}
-    let useCount  = {}
+    let cache = {}
+    let lastUsed = {}
+    let useCount = {}
     let createdAt = {}
 
     function isExpired(key) {
@@ -149,14 +149,14 @@ function memoize(fn, options = {}) {
         }
         if(Object.keys(cache).length >= maxSize) evict()
         const result = fn(...args)
-        cache[key]     = result
-        useCount[key]  = 1
-        lastUsed[key]  = Date.now()
+        cache[key] = result
+        useCount[key] = 1
+        lastUsed[key] = Date.now()
         createdAt[key] = Date.now()
         return result
     }
 
-    memoized.cacheSize  = () => Object.keys(cache).length
+    memoized.cacheSize = () => Object.keys(cache).length
     memoized.clearCache = () => { cache = {}; lastUsed = {}; useCount = {}; createdAt = {} }
     return memoized
 }
@@ -176,9 +176,9 @@ class BiDirectionalPriorityQueue {
         let best = 0
         this.items.forEach((entry, i) => {
             if(mode == 'highest' && entry.priority > this.items[best].priority) best = i
-            if(mode == 'lowest'  && entry.priority < this.items[best].priority) best = i
-            if(mode == 'oldest'  && entry.count    < this.items[best].count)    best = i
-            if(mode == 'newest'  && entry.count    > this.items[best].count)    best = i
+            if(mode == 'lowest' && entry.priority < this.items[best].priority) best = i
+            if(mode == 'oldest' && entry.count < this.items[best].count) best = i
+            if(mode == 'newest' && entry.count > this.items[best].count) best = i
         })
         return best
     }
@@ -196,7 +196,7 @@ class BiDirectionalPriorityQueue {
         return this.items[this._findIndex(mode)].item
     }
 
-    size()    { return this.items.length }
+    size() { return this.items.length }
     isEmpty() { return this.items.length === 0 }
 
     toArray(mode = 'highest') {
@@ -245,15 +245,13 @@ function getEmitter() {
 }
 
 const state = {
-    articles:  [],
-    paused:    false,
-    queue:     new BiDirectionalPriorityQueue(),
-    emitter:   getEmitter(),
-    stats:     { total: 0, shown: 0, high: 0 },
-    cats:      { tech: 0, crypto: 0, memes: 0 },
-    likes:     {},   // id -> true
-    dislikes:  {},   // id -> true
-    bookmarks: [],   // array of article objects
+    articles: [],
+    paused: false,
+    queue: new BiDirectionalPriorityQueue(),
+    emitter: getEmitter(),
+    stats: { total: 0, shown: 0, high: 0 },
+    cats: { tech: 0, crypto: 0, memes: 0 },
+    bookmarks: [],
 }
 
 const getCatCount = memoize((cat) => {
@@ -293,47 +291,17 @@ function timeAgo(timestamp) {
     return `${Math.floor(mins / 60)}h ago`
 }
 
-function handleLike(id, btn) {
-    if(state.likes[id]) {
-        delete state.likes[id]
-        btn.classList.remove('active')
-        addLog('debug', `unliked article #${id}`)
-    } else {
-        state.likes[id] = true
-        delete state.dislikes[id]
-        btn.classList.add('active')
-        const disBtn = document.querySelector(`.article-card[data-id="${id}"] .btn-dislike`)
-        if(disBtn) disBtn.classList.remove('active')
-        addLog('info', `liked article #${id}`)
-    }
-}
-
-function handleDislike(id, btn) {
-    if(state.dislikes[id]) {
-        delete state.dislikes[id]
-        btn.classList.remove('active')
-        addLog('debug', `removed dislike from article #${id}`)
-    } else {
-        state.dislikes[id] = true
-        delete state.likes[id]
-        btn.classList.add('active')
-        const likeBtn = document.querySelector(`.article-card[data-id="${id}"] .btn-like`)
-        if(likeBtn) likeBtn.classList.remove('active')
-        addLog('info', `disliked article #${id}`)
-    }
-}
-
 function handleBookmark(article, btn) {
     const already = state.bookmarks.find(a => a.id == article.id)
     if(already) {
         state.bookmarks = state.bookmarks.filter(a => a.id != article.id)
         btn.classList.remove('active')
-        btn.textContent = '☆'
+        btn.textContent = 'save'
         addLog('debug', `removed bookmark: ${article.title}`)
     } else {
         state.bookmarks.unshift(article)
         btn.classList.add('active')
-        btn.textContent = '★'
+        btn.textContent = 'saved'
         addLog('info', `bookmarked: ${article.title}`)
     }
     renderBookmarks()
@@ -348,12 +316,24 @@ function renderBookmarks() {
         return
     }
 
-    list.innerHTML = state.bookmarks.map(article => `
-        <div class="bookmark-row">
-            <span class="tag tag-${article.category}">${article.category}</span>
-            <span class="bookmark-title">${article.title}</span>
-        </div>
-    `).join('')
+    list.innerHTML = state.bookmarks.map((article, idx) => {
+        const cls = getPriorityClass(article.priority)
+        const priLabel = { high: 'hype', medium: 'common', low: 'low' }[cls] || cls
+        return `
+            <div class="bookmark-row" data-idx="${idx}" style="cursor:pointer">
+                <div class="bookmark-top">
+                    <span class="tag tag-${article.category}">${article.category}</span>
+                    <span class="bookmark-priority">${priLabel}</span>
+                    <span class="bookmark-time">${timeAgo(article.timestamp)}</span>
+                </div>
+                <div class="bookmark-title">${article.title}</div>
+            </div>
+        `
+    }).join('')
+
+    list.querySelectorAll('.bookmark-row').forEach((row, idx) => {
+        row.addEventListener('click', () => openModal(state.bookmarks[idx]))
+    })
 }
 
 function renderCard(article) {
@@ -384,22 +364,16 @@ function renderCard(article) {
                 <span class="article-source">${article.source}</span>
                 <span class="article-time">${timeAgo(article.timestamp)}</span>
                 <div class="article-actions">
-                    <button class="btn-like" title="like">↑</button>
-                    <button class="btn-dislike" title="dislike">↓</button>
-                    <button class="btn-bookmark" title="bookmark">☆</button>
+                    <button class="btn-bookmark" title="bookmark">save</button>
                 </div>
             </div>
         </div>
     `
-
-    // wire buttons
-    const likeBtn     = card.querySelector('.btn-like')
-    const dislikeBtn  = card.querySelector('.btn-dislike')
     const bookmarkBtn = card.querySelector('.btn-bookmark')
-
-    likeBtn.addEventListener('click', (e) => { e.stopPropagation(); handleLike(article.id, likeBtn) })
-    dislikeBtn.addEventListener('click', (e) => { e.stopPropagation(); handleDislike(article.id, dislikeBtn) })
     bookmarkBtn.addEventListener('click', (e) => { e.stopPropagation(); handleBookmark(article, bookmarkBtn) })
+
+    card.querySelector('.article-body').addEventListener('click', () => openModal(article))
+    card.querySelector('.article-body').style.cursor = 'pointer'
 
     list.prepend(card)
 
@@ -411,7 +385,7 @@ function updateStats() {
     const el = (id) => document.getElementById(id)
     if(el('s-total')) el('s-total').textContent = state.stats.total
     if(el('s-shown')) el('s-shown').textContent = state.stats.shown
-    if(el('s-high'))  el('s-high').textContent  = state.stats.high
+    if(el('s-high')) el('s-high').textContent  = state.stats.high
     if(el('s-queue')) el('s-queue').textContent = state.queue.size()
 }
 
@@ -421,7 +395,7 @@ function updateCategories() {
     const total = state.stats.total || 1
     list.innerHTML = ['crypto', 'tech', 'memes'].map(cat => {
         const count = state.cats[cat] || 0
-        const pct   = Math.round((count / total) * 100)
+        const pct = Math.round((count / total) * 100)
         return `
             <div class="cat-row">
                 <div class="cat-header">
@@ -502,8 +476,6 @@ function clearFeed() {
     state.stats.shown = 0
     state.stats.high  = 0
     state.cats = { tech: 0, crypto: 0, memes: 0 }
-    state.likes = {}
-    state.dislikes = {}
     while(!state.queue.isEmpty()) state.queue.dequeue()
     getCatCount.clearCache()
     updateStats()
@@ -546,6 +518,52 @@ function init() {
     renderBookmarks()
 }
 
+let _modalArticle = null
+
+function openModal(article) {
+    _modalArticle = article
+
+    document.getElementById('modal-tag').className = `tag tag-${article.category}`
+    document.getElementById('modal-tag').textContent = article.category
+    document.getElementById('modal-source').textContent = article.source
+    document.getElementById('modal-time').textContent = timeAgo(article.timestamp)
+    document.getElementById('modal-title').textContent = article.title
+    document.getElementById('modal-summary').textContent =
+        `received at ${new Date(article.timestamp).toLocaleTimeString()} via ${article.source}`
+
+    const bookmarkBtn = document.getElementById('modal-bookmark')
+    bookmarkBtn.classList.toggle('active', !!state.bookmarks.find(a => a.id == article.id))
+    bookmarkBtn.textContent = state.bookmarks.find(a => a.id == article.id) ? 'saved' : 'save'
+
+    document.getElementById('article-modal').style.display = 'flex'
+    addLog('debug', `opened article: ${article.title}`)
+}
+
+function closeModal() {
+    document.getElementById('article-modal').style.display = 'none'
+    _modalArticle = null
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal)
+document.getElementById('article-modal').addEventListener('click', (e) => {
+    if(e.target === e.currentTarget) closeModal()
+})
+
+document.getElementById('modal-bookmark').addEventListener('click', () => {
+    if(!_modalArticle) return
+    const btn = document.getElementById('modal-bookmark')
+    handleBookmark(_modalArticle, btn)
+    btn.textContent = state.bookmarks.find(a => a.id == _modalArticle.id) ? 'saved' : 'save'
+    const cardBtn = document.querySelector(`.article-card[data-id="${_modalArticle.id}"] .btn-bookmark`)
+    if(cardBtn) {
+        cardBtn.classList.toggle('active', !!state.bookmarks.find(a => a.id == _modalArticle.id))
+        cardBtn.textContent = state.bookmarks.find(a => a.id == _modalArticle.id) ? 'saved' : 'save'
+    }
+})
+
+document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') closeModal()
+})
 
 document.getElementById('btn-filter').addEventListener('click', applyFilter)
 document.getElementById('btn-pause').addEventListener('click', togglePause)
